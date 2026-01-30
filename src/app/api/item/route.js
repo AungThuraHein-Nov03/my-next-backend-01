@@ -1,6 +1,6 @@
-import corsHeaders from "@/app/lib/cors";
+import corsHeaders from "@/lib/cors";
 import { NextResponse } from "next/server";
-import { getClientPromise } from "@/app/lib/mongodb";
+import { getClientPromise } from "@/lib/mongodb";
 
 export async function OPTIONS(req) {
   return new Response(null, {
@@ -9,14 +9,34 @@ export async function OPTIONS(req) {
   });
 }
 
-export async function GET() {
+export async function GET(req) {
   try {
+    const { searchParams } = new URL(req.url);
+    const page = parseInt(searchParams.get('page') || '1');
+    const limit = parseInt(searchParams.get('limit') || '10');
+    const skip = (page - 1) * limit;
+
     const client = await getClientPromise();
     const db = client.db("wad-01");
-    const result = await db.collection("item").find({}).toArray();
-    console.log("==> result", result);
+    
+    // Get total count for pagination info
+    const totalItems = await db.collection("item").countDocuments({});
+    const totalPages = Math.ceil(totalItems / limit);
 
-    return NextResponse.json(result, {
+    const result = await db.collection("item")
+      .find({})
+      .skip(skip)
+      .limit(limit)
+      .toArray();
+    
+    console.log(`==> result (page ${page}, limit ${limit})`, result.length);
+
+    return NextResponse.json({
+      items: result,
+      totalItems,
+      totalPages,
+      currentPage: page
+    }, {
       headers: corsHeaders
     });
   } catch (exception) {
@@ -34,25 +54,27 @@ export async function GET() {
 
 export async function POST(req) {
   const data = await req.json();
-  const itemName = data.name;
-  const itemPrice = data.price;
-  const itemCategory = data.category;
+  const { itemName, itemPrice, itemCategory, status } = data;
 
   try {
     const client = await getClientPromise();
     const db = client.db("wad-01");
 
     const result = await db.collection("item").insertOne({
-      itemName: itemName,
-      itemCategory: itemCategory,
-      itemPrice: itemPrice,
-      status: "ACTIVE"
+      itemName,
+      itemCategory,
+      itemPrice,
+      status: status || "ACTIVE" // Default to ACTIVE if not provided
     });
 
     return NextResponse.json({
-      id: result.insertedId
+      id: result.insertedId,
+      itemName,
+      itemCategory,
+      itemPrice,
+      status: status || "ACTIVE"
     }, {
-      status: 200,
+      status: 201,
       headers: corsHeaders
     });
   } catch (exception) {

@@ -1,4 +1,4 @@
-import corsHeaders from "@/app/lib/cors"; 
+import corsHeaders from "@/lib/cors"; 
 import { NextResponse } from "next/server"; 
 
 export async function OPTIONS(req) { 
