@@ -14,21 +14,21 @@ This is the backend for our class project. It basically just serves JSON data to
 
 ## How to run it
 
-1.  Make sure you have MongoDB running (I used local, but Atlas works too).
+1.  Make sure you have MongoDB running 
 2.  Install the packages:
     ```bash
     npm install
     ```
 3.  Set up your `.env.local` file with your DB string and a secret key:
     ```env
-    MONGODB_URI=mongodb://localhost:27017/wad-01
+    MONGODB_URI=mongodb+srv:<db_username>:<db_password>@work-01.sfziuvu.mongodb.net/
     JWT_SECRET=whatever_you_want
     ```
 4.  Start the server:
     ```bash
     npm run dev
     ```
-    (It usually runs on localhost:3000)
+    (It usually runs on localhost:3000, unless it is connected to frontEnd)
 
 ## API Endpoints
 
@@ -37,4 +37,3 @@ I've set up endpoints for Users, Items, and Auth.
 -   `POST /api/user/login` checks credentials and sets the httpOnly cookie.
 -   `GET /api/user/profile` uses that cookie to see who you are.
 
-The frontend (Vite app) should point to this server.
