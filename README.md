@@ -1,4 +1,4 @@
-# CSX4107 - Backend API (Week 09)
+# CSX4107 - Backend API (Week 07 - Week 09)
 
 This is the backend for our class project. It basically just serves JSON data to the React frontend. It's built with Next.js (using the app router) and connects to a MongoDB database.
 
