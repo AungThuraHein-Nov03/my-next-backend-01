@@ -36,4 +36,7 @@ I've set up endpoints for Users, Items, and Auth.
 -   `GET /api/user` returns the list of users (paginated).
 -   `POST /api/user/login` checks credentials and sets the httpOnly cookie.
 -   `GET /api/user/profile` uses that cookie to see who you are.
+-   `PUT /api/user/profile` allows users to update their first name and last name.
+-   `POST /api/user/profile/image` uploads a profile image.
+-   `DELETE /api/user/profile/image` removes the current profile image.
 

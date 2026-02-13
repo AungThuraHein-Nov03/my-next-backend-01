@@ -37,3 +37,69 @@ export async function GET(req) {
     });
   }
 }
+export async function PUT(req) {
+  const user = verifyJWT(req);
+  if (!user) {
+    return NextResponse.json(
+      { message: "Unauthorized" },
+      {
+        status: 401,
+        headers: corsHeaders,
+      },
+    );
+  }
+
+  try {
+    const body = await req.json();
+    const { firstname, lastname } = body;
+
+    if (!firstname && !lastname) {
+      return NextResponse.json(
+        { message: "At least one field (firstname or lastname) must be provided" },
+        {
+          status: 400,
+          headers: corsHeaders,
+        },
+      );
+    }
+
+    const client = await getClientPromise();
+    const db = client.db("wad-01");
+    const email = user.email;
+
+    const updateData = {};
+    if (firstname) updateData.firstname = firstname;
+    if (lastname) updateData.lastname = lastname;
+
+    const result = await db
+      .collection("user")
+      .updateOne({ email }, { $set: updateData });
+
+    if (result.matchedCount === 0) {
+      return NextResponse.json(
+        { message: "User not found" },
+        {
+          status: 404,
+          headers: corsHeaders,
+        },
+      );
+    }
+
+    return NextResponse.json(
+      { message: "Profile updated successfully" },
+      {
+        status: 200,
+        headers: corsHeaders,
+      },
+    );
+  } catch (error) {
+    console.log("Update Profile Exception: ", error.toString());
+    return NextResponse.json(
+      { message: "Failed to update profile" },
+      {
+        status: 500,
+        headers: corsHeaders,
+      },
+    );
+  }
+}
