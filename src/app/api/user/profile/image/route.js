@@ -1,5 +1,5 @@
 import { verifyJWT } from "@/lib/auth";
-import corsHeaders from "@/lib/cors";
+import corsHeaders, { getCorsHeaders } from "@/lib/cors";
 import { getClientPromise } from "@/lib/mongodb";
 import { NextResponse } from "next/server";
 import { v4 as uuidv4 } from "uuid";
@@ -8,7 +8,7 @@ import fs from "fs/promises";
 export async function OPTIONS(req) {
   return new Response(null, {
     status: 200,
-    headers: corsHeaders,
+    headers: getCorsHeaders(req),
   });
 }
 // Helper to parse multipart form data (works in Node.js API routes)
@@ -26,7 +26,7 @@ export async function POST(req) {
   if (!user) {
     return NextResponse.json(
       { message: "Unauthorized" },
-      { status: 401, headers: corsHeaders },
+      { status: 401, headers: getCorsHeaders(req) },
     );
   }
   let formData;
@@ -35,14 +35,14 @@ export async function POST(req) {
   } catch (err) {
     return NextResponse.json(
       { message: "Invalid form data" },
-      { status: 400, headers: corsHeaders },
+      { status: 400, headers: getCorsHeaders(req) },
     );
   }
   const file = formData.get("file");
   if (!file || typeof file === "string") {
     return NextResponse.json(
       { message: "No file uploaded" },
-      { status: 400, headers: corsHeaders },
+      { status: 400, headers: getCorsHeaders(req) },
     );
   }
   // Check if file is an image
@@ -50,7 +50,7 @@ export async function POST(req) {
   if (!allowedTypes.includes(file.type)) {
     return NextResponse.json(
       { message: "Only image files allowed" },
-      { status: 400, headers: corsHeaders },
+      { status: 400, headers: getCorsHeaders(req) },
     );
   }
   // Generate unique filename
@@ -78,12 +78,12 @@ export async function POST(req) {
   } catch (err) {
     return NextResponse.json(
       { message: "Failed to update user" },
-      { status: 500, headers: corsHeaders },
+      { status: 500, headers: getCorsHeaders(req) },
     );
   }
   return NextResponse.json(
     { imageUrl: `/profile-images/${filename}` },
-    { status: 200, headers: corsHeaders },
+    { status: 200, headers: getCorsHeaders(req) },
   );
 }
 export async function DELETE(req) {
@@ -91,7 +91,7 @@ export async function DELETE(req) {
   if (!user) {
     return NextResponse.json(
       { message: "Unauthorized" },
-      { status: 401, headers: corsHeaders },
+      { status: 401, headers: getCorsHeaders(req) },
     );
   }
   try {
@@ -112,12 +112,12 @@ export async function DELETE(req) {
     }
     return NextResponse.json(
       { message: "OK" },
-      { status: 200, headers: corsHeaders },
+      { status: 200, headers: getCorsHeaders(req) },
     );
   } catch (error) {
     return NextResponse.json(
       { message: error.toString() },
-      { status: 500, headers: corsHeaders },
+      { status: 500, headers: getCorsHeaders(req) },
     );
   }
 }

@@ -1,4 +1,4 @@
-import corsHeaders from "@/lib/cors";
+import corsHeaders, { getCorsHeaders } from "@/lib/cors";
 import { getClientPromise } from "@/lib/mongodb";
 import { headers } from "next/headers";
 import { NextResponse } from "next/server";
@@ -7,7 +7,7 @@ import { ObjectId } from "mongodb";
 export async function OPTIONS(req) {
     return new Response(null, {
     status: 200,
-    headers: corsHeaders,
+    headers: getCorsHeaders(req),
     });
     }
 
@@ -20,7 +20,7 @@ try {
     const result = await db.collection("item").findOne({_id: new ObjectId(id)});
     console.log("==> result", result);
     return NextResponse.json(result, {
-    headers: corsHeaders
+    headers: getCorsHeaders(req)
     });
  }
  catch (exception) {
@@ -30,7 +30,7 @@ try {
      message: errorMsg
     }, {
      status: 400,
-     headers: corsHeaders
+     headers: getCorsHeaders(req)
     })
  }
 }
@@ -56,7 +56,7 @@ export async function PATCH (req, { params }) {
 
         return NextResponse.json(updatedResult, {
             status: 200,
-            headers: corsHeaders
+            headers: getCorsHeaders(req)
         })
     }
     catch (exception) {
@@ -65,7 +65,7 @@ export async function PATCH (req, { params }) {
             message: errorMsg
         }, {
             status: 400,
-            headers: corsHeaders
+            headers: getCorsHeaders(req)
         })
     }
 }
@@ -86,7 +86,7 @@ export async function PUT (req, { params }) {
         
         return NextResponse.json(updatedResult, {
             status: 200,
-            headers: corsHeaders
+            headers: getCorsHeaders(req)
         })
     }
     catch (exception) {
@@ -96,7 +96,7 @@ export async function PUT (req, { params }) {
             message: errorMsg
         }, {
             status: 400,
-            headers: corsHeaders
+            headers: getCorsHeaders(req)
         })
     }
 }
@@ -110,7 +110,7 @@ export async function DELETE(req, { params }) {
         
         return NextResponse.json(result, {
             status: 200,
-            headers: corsHeaders
+            headers: getCorsHeaders(req)
         });
     } catch (exception) {
         console.log("exception", exception.toString());
@@ -119,7 +119,7 @@ export async function DELETE(req, { params }) {
             message: errorMsg
         }, {
             status: 400,
-            headers: corsHeaders
+            headers: getCorsHeaders(req)
         });
     }
 } 

@@ -1,4 +1,4 @@
-import corsHeaders from "@/lib/cors";
+import corsHeaders, { getCorsHeaders } from "@/lib/cors";
 import { getClientPromise } from "@/lib/mongodb";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
@@ -7,7 +7,7 @@ const JWT_SECRET = process.env.JWT_SECRET || "mydefaultjwtsecret"; // Use a stro
 export async function OPTIONS(req) {
   return new Response(null, {
     status: 200,
-    headers: corsHeaders,
+    headers: getCorsHeaders(req),
   });
 }
 export async function POST(req) {
@@ -20,7 +20,7 @@ export async function POST(req) {
       },
       {
         status: 400,
-        headers: corsHeaders,
+        headers: getCorsHeaders(req),
       },
     );
   }
@@ -35,7 +35,7 @@ export async function POST(req) {
         },
         {
           status: 401,
-          headers: corsHeaders,
+          headers: getCorsHeaders(req),
         },
       );
     }
@@ -47,7 +47,7 @@ export async function POST(req) {
         },
         {
           status: 401,
-          headers: corsHeaders,
+          headers: getCorsHeaders(req),
         },
       );
     }
@@ -68,7 +68,7 @@ export async function POST(req) {
       },
       {
         status: 200,
-        headers: corsHeaders,
+        headers: getCorsHeaders(req),
       },
     );
     response.cookies.set("token", token, {
@@ -87,7 +87,7 @@ export async function POST(req) {
       },
       {
         status: 500,
-        headers: corsHeaders,
+        headers: getCorsHeaders(req),
       },
     );
   }

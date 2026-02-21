@@ -1,4 +1,4 @@
-import corsHeaders from "@/lib/cors";
+import corsHeaders, { getCorsHeaders } from "@/lib/cors";
 import { getClientPromise } from "@/lib/mongodb";
 import { ensureIndexes } from "@/lib/ensureIndexes";
 import bcrypt from "bcrypt";
@@ -7,7 +7,7 @@ import { NextResponse } from "next/server";
 export async function OPTIONS(req) {
   return new Response(null, {
     status: 200,
-    headers: corsHeaders,
+    headers: getCorsHeaders(req),
   });
 }
 
@@ -39,7 +39,7 @@ export async function GET(req) {
       totalPages,
       currentPage: page
     }, {
-      headers: corsHeaders
+      headers: getCorsHeaders(req)
     });
   } catch (exception) {
     console.log("exception", exception.toString());
@@ -47,7 +47,7 @@ export async function GET(req) {
       message: exception.toString()
     }, {
       status: 400,
-      headers: corsHeaders
+      headers: getCorsHeaders(req)
     });
   }
 }
@@ -66,7 +66,7 @@ export async function POST(req) {
       },
       {
         status: 400,
-        headers: corsHeaders,
+        headers: getCorsHeaders(req),
       },
     );
   }
@@ -88,7 +88,7 @@ export async function POST(req) {
       },
       {
         status: 200,
-        headers: corsHeaders,
+        headers: getCorsHeaders(req),
       },
     );
   } catch (exception) {
@@ -115,7 +115,7 @@ export async function POST(req) {
             });
             return NextResponse.json(
               { id: result.insertedId },
-              { status: 200, headers: corsHeaders }
+              { status: 200, headers: getCorsHeaders(req) }
             );
         } catch (retryEx) {
             // If retry fails, check if it's a real duplicate now
@@ -129,7 +129,7 @@ export async function POST(req) {
             }
              return NextResponse.json(
               { message: displayErrorMsg },
-              { status: 400, headers: corsHeaders }
+              { status: 400, headers: getCorsHeaders(req) }
             );
         }
     }
@@ -147,7 +147,7 @@ export async function POST(req) {
       },
       {
         status: 400,
-        headers: corsHeaders,
+        headers: getCorsHeaders(req),
       },
     );
   }

@@ -1,11 +1,11 @@
-import corsHeaders from "@/lib/cors";
+import corsHeaders, { getCorsHeaders } from "@/lib/cors";
 import { NextResponse } from "next/server";
 import { getClientPromise } from "@/lib/mongodb";
 
 export async function OPTIONS(req) {
   return new Response(null, {
     status: 200,
-    headers: corsHeaders,
+    headers: getCorsHeaders(req),
   });
 }
 
@@ -37,7 +37,7 @@ export async function GET(req) {
       totalPages,
       currentPage: page
     }, {
-      headers: corsHeaders
+      headers: getCorsHeaders(req)
     });
   } catch (exception) {
     console.log("exception", exception.toString());
@@ -47,7 +47,7 @@ export async function GET(req) {
       message: errorMsg
     }, {
       status: 400,
-      headers: corsHeaders
+      headers: getCorsHeaders(req)
     });
   }
 }
@@ -75,7 +75,7 @@ export async function POST(req) {
       status: status || "ACTIVE"
     }, {
       status: 201,
-      headers: corsHeaders
+      headers: getCorsHeaders(req)
     });
   } catch (exception) {
     console.log("exception", exception.toString());
@@ -85,7 +85,7 @@ export async function POST(req) {
       message: errorMsg
     }, {
       status: 400,
-      headers: corsHeaders
+      headers: getCorsHeaders(req)
     });
   }
 }

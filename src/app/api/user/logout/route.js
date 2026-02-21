@@ -1,12 +1,12 @@
-import corsHeaders from "@/lib/cors";
+import corsHeaders, { getCorsHeaders } from "@/lib/cors";
 import { NextResponse } from "next/server";
 export async function OPTIONS(req) {
   return new Response(null, {
     status: 200,
-    headers: corsHeaders,
+    headers: getCorsHeaders(req),
   });
 }
-export async function POST() {
+export async function POST(req) {
   // Clear the JWT cookie by setting it to empty and expired
   const response = NextResponse.json(
     {
@@ -14,7 +14,7 @@ export async function POST() {
     },
     {
       status: 200,
-      headers: corsHeaders,
+      headers: getCorsHeaders(req),
     },
   );
   response.cookies.set("token", "", {
@@ -22,7 +22,7 @@ export async function POST() {
     sameSite: "lax",
     path: "/",
     maxAge: 0,
-    ecure: process.env.NODE_ENV === "production",
+    secure: process.env.NODE_ENV === "production",
   });
   return response;
 }

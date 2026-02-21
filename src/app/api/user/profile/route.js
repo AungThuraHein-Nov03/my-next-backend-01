@@ -1,11 +1,11 @@
 import { verifyJWT } from "@/lib/auth";
-import corsHeaders from "@/lib/cors";
+import corsHeaders, { getCorsHeaders } from "@/lib/cors";
 import { getClientPromise } from "@/lib/mongodb";
 import { NextResponse } from "next/server";
 export async function OPTIONS(req) {
   return new Response(null, {
     status: 200,
-    headers: corsHeaders,
+    headers: getCorsHeaders(req),
   });
 }
 export async function GET(req) {
@@ -17,7 +17,7 @@ export async function GET(req) {
       },
       {
         status: 401,
-        headers: corsHeaders,
+        headers: getCorsHeaders(req),
       },
     );
   }
@@ -28,12 +28,12 @@ export async function GET(req) {
     const profile = await db.collection("user").findOne({ email });
     console.log("profile: ", profile);
     return NextResponse.json(profile, {
-      headers: corsHeaders,
+      headers: getCorsHeaders(req),
     });
   } catch (error) {
     console.log("Get Profile Exception: ", error.toString());
     return NextResponse.json(error.toString(), {
-      headers: corsHeaders,
+      headers: getCorsHeaders(req),
     });
   }
 }
@@ -44,7 +44,7 @@ export async function PUT(req) {
       { message: "Unauthorized" },
       {
         status: 401,
-        headers: corsHeaders,
+        headers: getCorsHeaders(req),
       },
     );
   }
@@ -58,7 +58,7 @@ export async function PUT(req) {
         { message: "At least one field (firstname or lastname) must be provided" },
         {
           status: 400,
-          headers: corsHeaders,
+          headers: getCorsHeaders(req),
         },
       );
     }
@@ -80,7 +80,7 @@ export async function PUT(req) {
         { message: "User not found" },
         {
           status: 404,
-          headers: corsHeaders,
+          headers: getCorsHeaders(req),
         },
       );
     }
@@ -89,7 +89,7 @@ export async function PUT(req) {
       { message: "Profile updated successfully" },
       {
         status: 200,
-        headers: corsHeaders,
+        headers: getCorsHeaders(req),
       },
     );
   } catch (error) {
@@ -98,7 +98,7 @@ export async function PUT(req) {
       { message: "Failed to update profile" },
       {
         status: 500,
-        headers: corsHeaders,
+        headers: getCorsHeaders(req),
       },
     );
   }

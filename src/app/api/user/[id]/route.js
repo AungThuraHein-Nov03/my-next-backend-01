@@ -1,4 +1,4 @@
-import corsHeaders from "@/lib/cors";
+import corsHeaders, { getCorsHeaders } from "@/lib/cors";
 import { getClientPromise } from "@/lib/mongodb";
 import { NextResponse } from "next/server";
 import { ObjectId } from "mongodb";
@@ -7,7 +7,7 @@ import bcrypt from "bcrypt";
 export async function OPTIONS(req) {
     return new Response(null, {
         status: 200,
-        headers: corsHeaders,
+        headers: getCorsHeaders(req),
     });
 }
 
@@ -23,11 +23,11 @@ export async function GET(req, { params }) {
         );
         
         if (!result) {
-            return NextResponse.json({ message: "User not found" }, { status: 404, headers: corsHeaders });
+            return NextResponse.json({ message: "User not found" }, { status: 404, headers: getCorsHeaders(req) });
         }
 
         return NextResponse.json(result, {
-            headers: corsHeaders
+            headers: getCorsHeaders(req)
         });
     }
     catch (exception) {
@@ -36,7 +36,7 @@ export async function GET(req, { params }) {
             message: exception.toString()
         }, {
             status: 400,
-            headers: corsHeaders
+            headers: getCorsHeaders(req)
         })
     }
 }
@@ -74,7 +74,7 @@ export async function PUT(req, { params }) {
 
         return NextResponse.json(updatedResult, {
             status: 200,
-            headers: corsHeaders
+            headers: getCorsHeaders(req)
         })
     }
     catch (exception) {
@@ -89,14 +89,14 @@ export async function PUT(req, { params }) {
              } else if (errorMsg.includes("email")) {
                 displayErrorMsg = "Duplicate Email!!";
              }
-             return NextResponse.json({ message: displayErrorMsg }, { status: 409, headers: corsHeaders });
+             return NextResponse.json({ message: displayErrorMsg }, { status: 409, headers: getCorsHeaders(req) });
         }
 
         return NextResponse.json({
             message: displayErrorMsg
         }, {
             status: 400,
-            headers: corsHeaders
+            headers: getCorsHeaders(req)
         })
     }
 }
@@ -112,7 +112,7 @@ export async function DELETE(req, { params }) {
 
         return NextResponse.json(result, {
             status: 200,
-            headers: corsHeaders
+            headers: getCorsHeaders(req)
         })
     }
     catch (exception) {
@@ -121,7 +121,7 @@ export async function DELETE(req, { params }) {
             message: exception.toString()
         }, {
             status: 400,
-            headers: corsHeaders
+            headers: getCorsHeaders(req)
         })
     }
 }
